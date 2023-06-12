@@ -20,6 +20,6 @@ namespace SalesWebMvc.Data
             get; set;
         }
 
-        public DbSet<SalesRecord> SalesRecords { get; set; }
+        public DbSet<SalesRecord> SalesRecord { get; set; }
     }
 }
