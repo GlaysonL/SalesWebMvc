@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using SalesWebMvc.Services.Exceptions;
 
 namespace SalesWebMvc.Services
 {
@@ -36,6 +37,24 @@ namespace SalesWebMvc.Services
             var obj = _context.Seller.Find(id);
             _context.Seller.Remove(obj);
             _context.SaveChanges();
+        }
+
+        public void Update(Seller obj)
+        {
+            if(!_context.Seller.Any(x => x.Id == obj.Id)) // Verifica se tem o ID no DB
+            {
+                throw new NotFoundException("Id not found"); // Caso não exista o OBJ no DB, retorna a mensagem.
+            }
+
+            try // Tentativa de atualizar o obj
+            {
+                _context.Update(obj);
+                _context.SaveChanges();
+            }
+            catch(DbConcurrencyException e) //caso o DB retorne uma excessão
+            {
+                throw new DbConcurrencyException(e.Message); //Aqui pega o retorno do DB e joga no html. (Segregação de camada)
+            }
         }
     }
 
